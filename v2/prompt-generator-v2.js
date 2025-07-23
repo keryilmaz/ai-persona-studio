@@ -89,9 +89,11 @@ function getMBTIType() {
 }
 
 // Update slider values
-document.querySelectorAll('.slider').forEach(slider => {
-    slider.addEventListener('input', function() {
-        document.getElementById(this.id + '-value').textContent = this.value;
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.slider').forEach(slider => {
+        slider.addEventListener('input', function() {
+            document.getElementById(this.id + '-value').textContent = this.value;
+        });
     });
 });
 
@@ -460,60 +462,67 @@ function clearForm() {
 }
 
 // Add enter key support for quirk input
-document.getElementById('new-quirk').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        addQuirk();
+document.addEventListener('DOMContentLoaded', function() {
+    const quirkInput = document.getElementById('new-quirk');
+    if (quirkInput) {
+        quirkInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addQuirk();
+            }
+        });
     }
 });
 
-// Add CSS for quirk items
-const style = document.createElement('style');
-style.textContent = `
-.quirk-item {
-    background: #ecf0f1;
-    padding: 8px 12px;
-    margin-bottom: 5px;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+// Add CSS for quirk items when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    const style = document.createElement('style');
+    style.textContent = `
+    .quirk-item {
+        background: #ecf0f1;
+        padding: 8px 12px;
+        margin-bottom: 5px;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-.remove-button {
-    background: #e74c3c;
-    color: white;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 12px;
-}
+    .remove-button {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px;
+    }
 
-.remove-button:hover {
-    background: #c0392b;
-}
+    .remove-button:hover {
+        background: #c0392b;
+    }
 
-.add-button {
-    padding: 8px 16px;
-    background: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
+    .add-button {
+        padding: 8px 16px;
+        background: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-.add-button:hover {
-    background: #229954;
-}
+    .add-button:hover {
+        background: #229954;
+    }
 
-.quirk-input {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
+    .quirk-input {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
 
-.quirk-input input {
-    flex: 1;
-}
-`;
-document.head.appendChild(style);
+    .quirk-input input {
+        flex: 1;
+    }
+    `;
+    document.head.appendChild(style);
+});
