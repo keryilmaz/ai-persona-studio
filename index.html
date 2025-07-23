@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Persona Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6200EA;
+            --primary-dark: #3700B3;
+            --background: #FAFAFA;
+            --surface: #FFFFFF;
+            --on-surface: #1C1B1F;
+            --on-surface-variant: #49454F;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--on-surface);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 48px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: var(--on-surface-variant);
+            margin-bottom: 48px;
+            line-height: 1.6;
+        }
+
+        .version-grid {
+            display: grid;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .version-card {
+            background: var(--background);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: left;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .version-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(98, 0, 234, 0.1);
+        }
+
+        .version-card h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--on-surface);
+        }
+
+        .version-card .description {
+            color: var(--on-surface-variant);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .version-card ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 24px;
+        }
+
+        .version-card li {
+            padding: 8px 0;
+            color: var(--on-surface-variant);
+            font-size: 14px;
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .version-card li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .launch-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            gap: 8px;
+        }
+
+        .launch-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(98, 0, 234, 0.3);
+        }
+
+        .recommended {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .github-link {
+            color: var(--on-surface-variant);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .github-link:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 32px 24px;
+            }
+            
+            h1 {
+                font-size: 36px;
+            }
+            
+            .subtitle {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Persona Studio</h1>
+        <p class="subtitle">Create rich, dynamic AI character prompts using personality psychology frameworks and improvisational storytelling techniques.</p>
+        
+        <div class="version-grid">
+            <div class="version-card">
+                <span class="recommended">RECOMMENDED</span>
+                <h2>Version 3 - Material Design</h2>
+                <p class="description">The latest and most polished version with a beautiful Material Design interface.</p>
+                <ul>
+                    <li>Professional Material Design UI</li>
+                    <li>Simplified MBTI selection for beginners</li>
+                    <li>Single-page experience with smooth animations</li>
+                    <li>Mobile responsive design</li>
+                    <li>Enhanced visual hierarchy</li>
+                </ul>
+                <a href="v2/agent-persona-generator-v3.html" class="launch-button">
+                    <span>Launch v3</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <div class="version-card">
+                <h2>Version 2 - Enhanced</h2>
+                <p class="description">Added MBTI personality framework with tabbed interface.</p>
+                <ul>
+                    <li>MBTI personality types</li>
+                    <li>Tabbed navigation</li>
+                    <li>Combined personality systems</li>
+                    <li>More detailed outputs</li>
+                </ul>
+                <a href="v2/agent-persona-generator-v2.html" class="launch-button">
+                    <span>Launch v2</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <div class="version-card">
+                <h2>Version 1 - Original</h2>
+                <p class="description">The original version with Big Five personality traits.</p>
+                <ul>
+                    <li>Big Five personality framework</li>
+                    <li>Basic web interface</li>
+                    <li>Core functionality</li>
+                    <li>Simple and straightforward</li>
+                </ul>
+                <a href="v1/agent-persona-generator.html" class="launch-button">
+                    <span>Launch v1</span>
+                    <span>→</span>
+                </a>
+            </div>
+        </div>
+        
+        <a href="https://github.com/keryilmaz/ai-persona-studio" class="github-link">View on GitHub</a>
+    </div>
+</body>
+</html>
