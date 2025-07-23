@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Persona Generator v2 - Enhanced Edition</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .version-badge {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            color: #7f8c8d;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            color: #3498db;
+        }
+        
+        .tab.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .section h2 {
+            color: #34495e;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        /* MBTI Styles */
+        .mbti-section {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .mbti-dimension {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .dimension-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .dimension-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .dimension-result {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            padding: 5px 15px;
+            background: #e3f2fd;
+            border-radius: 5px;
+        }
+        
+        .dimension-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .choice-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .choice-card {
+            padding: 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .choice-card:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .choice-card.selected {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+        
+        .choice-letter {
+            font-size: 36px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .choice-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .choice-traits {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        
+        .choice-traits li {
+            padding: 5px 0;
+            color: #555;
+            font-size: 14px;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .choice-traits li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        .choice-example {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-style: italic;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .spectrum-indicator {
+            margin-top: 15px;
+            height: 8px;
+            background: linear-gradient(to right, #e74c3c 0%, #f39c12 50%, #27ae60 100%);
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .spectrum-marker {
+            position: absolute;
+            top: -6px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid #3498db;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            transition: left 0.3s;
+        }
+        
+        /* Big Five Styles (Enhanced) */
+        .trait-slider {
+            margin-bottom: 25px;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .trait-value {
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .trait-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .trait-description {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+        
+        .button {
+            background: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .button:hover {
+            background: #2980b9;
+        }
+        
+        .button-secondary {
+            background: #95a5a6;
+        }
+        
+        .button-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .output {
+            margin-top: 30px;
+            padding: 20px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .preset-button {
+            padding: 8px 16px;
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .preset-button:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: #555;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .help-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 12px;
+            margin-left: 5px;
+            cursor: help;
+        }
+        
+        .mbti-result-display {
+            text-align: center;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .mbti-type {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .mbti-nickname {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        
+        .mbti-description {
+            font-size: 14px;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Agent Persona Generator</h1>
+        <div class="version-badge">Version 2.0 - Enhanced with MBTI</div>
+        
+        <div class="tab-container">
+            <button class="tab active" onclick="switchTab('basic')">Basic Info</button>
+            <button class="tab" onclick="switchTab('mbti')">Personality (MBTI)</button>
+            <button class="tab" onclick="switchTab('bigfive')">Personality (Big Five)</button>
+            <button class="tab" onclick="switchTab('style')">Communication Style</button>
+            <button class="tab" onclick="switchTab('situation')">Situation</button>
+            <button class="tab" onclick="switchTab('generate')">Generate</button>
+        </div>
+        
+        <div class="preset-buttons">
+            <button class="preset-button" onclick="loadPreset('librarian')">Whimsical Librarian</button>
+            <button class="preset-button" onclick="loadPreset('detective')">Noir Detective</button>
+            <button class="preset-button" onclick="loadPreset('mentor')">Wise Mentor</button>
+            <button class="preset-button" onclick="loadPreset('explorer')">Curious Explorer</button>
+        </div>
+        
+        <!-- Basic Info Tab -->
+        <div id="basic-tab" class="tab-content">
+            <div class="section">
+                <h2>Core Identity</h2>
+                <div class="form-group">
+                    <label for="name">Character Name</label>
+                    <input type="text" id="name" placeholder="e.g., Elara">
+                </div>
+                
+                <div class="form-group">
+                    <label for="archetype">Archetype</label>
+                    <input type="text" id="archetype" placeholder="e.g., The Whimsical Librarian">
+                </div>
+                
+                <div class="form-group">
+                    <label for="backstory">Backstory</label>
+                    <textarea id="backstory" placeholder="Brief history that shapes their worldview..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="motivation">Core Motivation</label>
+                    <input type="text" id="motivation" placeholder="What drives this character?">
+                </div>
+            </div>
+        </div>
+        
+        <!-- MBTI Tab -->
+        <div id="mbti-tab" class="tab-content" style="display: none;">
+            <div class="mbti-result-display" id="mbti-result" style="display: none;">
+                <div class="mbti-type" id="mbti-type-display">INFJ</div>
+                <div class="mbti-nickname" id="mbti-nickname">The Advocate</div>
+                <div class="mbti-description" id="mbti-description">Thoughtful and imaginative, they seek meaning in relationships, ideas, and events.</div>
+            </div>
+            
+            <div class="mbti-section">
+                <h2>Personality Type (MBTI) 
+                    <span class="tooltip">
+                        <span class="help-icon">?</span>
+                        <span class="tooltiptext">MBTI categorizes personalities into 16 types based on 4 dimensions. Choose what feels most natural for your character in each dimension.</span>
+                    </span>
+                </h2>
+                
+                <!-- Energy Direction -->
+                <div class="mbti-dimension">
+                    <div class="dimension-header">
+                        <span class="dimension-title">How does your character get energy?</span>
+                        <span class="dimension-result" id="energy-result">?</span>
+                    </div>
+                    <div class="dimension-description">
+                        This determines whether your character draws energy from interacting with others or from spending time alone.
+                    </div>
+                    <div class="choice-container">
+                        <div class="choice-card" onclick="selectMBTI('energy', 'E')">
+                            <div class="choice-letter">E</div>
+                            <div class="choice-title">Extravert</div>
+                            <ul class="choice-traits">
+                                <li>Gets energy from people and activities</li>
+                                <li>Thinks out loud</li>
+                                <li>Enjoys being the center of attention</li>
+                                <li>Acts first, thinks later</li>
+                            </ul>
+                            <div class="choice-example">
+                                "Let me bounce this idea off you..." *proceeds to think through the problem while talking*
+                            </div>
+                        </div>
+                        <div class="choice-card" onclick="selectMBTI('energy', 'I')">
+                            <div class="choice-letter">I</div>
+                            <div class="choice-title">Introvert</div>
+                            <ul class="choice-traits">
+                                <li>Gets energy from quiet reflection</li>
+                                <li>Thinks internally before speaking</li>
+                                <li>Prefers deep conversations with few</li>
+                                <li>Thinks first, acts later</li>
+                            </ul>
+                            <div class="choice-example">
+                                *pauses thoughtfully* "I've been considering this, and I believe..."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Information Processing -->
+                <div class="mbti-dimension">
+                    <div class="dimension-header">
+                        <span class="dimension-title">How does your character process information?</span>
+                        <span class="dimension-result" id="information-result">?</span>
+                    </div>
+                    <div class="dimension-description">
+                        This determines whether your character focuses on concrete facts and details or abstract patterns and possibilities.
+                    </div>
+                    <div class="choice-container">
+                        <div class="choice-card" onclick="selectMBTI('information', 'S')">
+                            <div class="choice-letter">S</div>
+                            <div class="choice-title">Sensor</div>
+                            <ul class="choice-traits">
+                                <li>Focuses on facts and details</li>
+                                <li>Trusts direct experience</li>
+                                <li>Lives in the present</li>
+                                <li>Practical and realistic</li>
+                            </ul>
+                            <div class="choice-example">
+                                "Let's look at the facts: yesterday at 3:47 PM, the temperature was exactly 72°F when this happened..."
+                            </div>
+                        </div>
+                        <div class="choice-card" onclick="selectMBTI('information', 'N')">
+                            <div class="choice-letter">N</div>
+                            <div class="choice-title">Intuitive</div>
+                            <ul class="choice-traits">
+                                <li>Focuses on patterns and possibilities</li>
+                                <li>Trusts hunches and insights</li>
+                                <li>Thinks about the future</li>
+                                <li>Imaginative and theoretical</li>
+                            </ul>
+                            <div class="choice-example">
+                                "I have a feeling this connects to something bigger... What if we're looking at this all wrong?"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Decision Making -->
+                <div class="mbti-dimension">
+                    <div class="dimension-header">
+                        <span class="dimension-title">How does your character make decisions?</span>
+                        <span class="dimension-result" id="decisions-result">?</span>
+                    </div>
+                    <div class="dimension-description">
+                        This determines whether your character prioritizes logic and consistency or values and harmony when making choices.
+                    </div>
+                    <div class="choice-container">
+                        <div class="choice-card" onclick="selectMBTI('decisions', 'T')">
+                            <div class="choice-letter">T</div>
+                            <div class="choice-title">Thinker</div>
+                            <ul class="choice-traits">
+                                <li>Uses logic and analysis</li>
+                                <li>Values truth over tact</li>
+                                <li>Notices inconsistencies</li>
+                                <li>Fair and objective</li>
+                            </ul>
+                            <div class="choice-example">
+                                "The data clearly shows the most efficient solution. Personal feelings shouldn't cloud our judgment here."
+                            </div>
+                        </div>
+                        <div class="choice-card" onclick="selectMBTI('decisions', 'F')">
+                            <div class="choice-letter">F</div>
+                            <div class="choice-title">Feeler</div>
+                            <ul class="choice-traits">
+                                <li>Considers values and people</li>
+                                <li>Values tact and harmony</li>
+                                <li>Notices emotional nuances</li>
+                                <li>Empathetic and personal</li>
+                            </ul>
+                            <div class="choice-example">
+                                "I understand the logic, but how will this affect everyone involved? We need to consider their feelings too."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lifestyle -->
+                <div class="mbti-dimension">
+                    <div class="dimension-header">
+                        <span class="dimension-title">How does your character approach life?</span>
+                        <span class="dimension-result" id="lifestyle-result">?</span>
+                    </div>
+                    <div class="dimension-description">
+                        This determines whether your character prefers structure and closure or flexibility and openness in their daily life.
+                    </div>
+                    <div class="choice-container">
+                        <div class="choice-card" onclick="selectMBTI('lifestyle', 'J')">
+                            <div class="choice-letter">J</div>
+                            <div class="choice-title">Judger</div>
+                            <ul class="choice-traits">
+                                <li>Likes plans and structure</li>
+                                <li>Makes decisions quickly</li>
+                                <li>Enjoys closure and completion</li>
+                                <li>Organized and scheduled</li>
+                            </ul>
+                            <div class="choice-example">
+                                "Let's make a plan. First, we'll do A, then B, and we should finish by 3 PM. I've already prepared a checklist."
+                            </div>
+                        </div>
+                        <div class="choice-card" onclick="selectMBTI('lifestyle', 'P')">
+                            <div class="choice-letter">P</div>
+                            <div class="choice-title">Perceiver</div>
+                            <ul class="choice-traits">
+                                <li>Likes flexibility and options</li>
+                                <li>Keeps decisions open</li>
+                                <li>Enjoys starting new things</li>
+                                <li>Adaptable and spontaneous</li>
+                            </ul>
+                            <div class="choice-example">
+                                "Let's see where this takes us! We can always adjust as we go. The best discoveries happen when we stay open."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Big Five Tab -->
+        <div id="bigfive-tab" class="tab-content" style="display: none;">
+            <div class="section">
+                <h2>Personality Traits (Big Five)
+                    <span class="tooltip">
+                        <span class="help-icon">?</span>
+                        <span class="tooltiptext">The Big Five model measures personality across 5 dimensions. Adjust the sliders to fine-tune your character's personality.</span>
+                    </span>
+                </h2>
+                
+                <div class="trait-slider">
+                    <div class="trait-label">
+                        <label>Openness (Curiosity & Imagination)</label>
+                        <span class="trait-value" id="openness-value">50</span>
+                    </div>
+                    <div class="trait-description">Low: Practical, traditional, focused on concrete | High: Creative, curious, loves abstract ideas</div>
+                    <input type="range" class="slider" id="openness" min="0" max="100" value="50">
+                </div>
+                
+                <div class="trait-slider">
+                    <div class="trait-label">
+                        <label>Conscientiousness (Organization & Discipline)</label>
+                        <span class="trait-value" id="conscientiousness-value">50</span>
+                    </div>
+                    <div class="trait-description">Low: Flexible, spontaneous, adaptable | High: Organized, disciplined, goal-oriented</div>
+                    <input type="range" class="slider" id="conscientiousness" min="0" max="100" value="50">
+                </div>
+                
+                <div class="trait-slider">
+                    <div class="trait-label">
+                        <label>Extraversion (Social Energy)</label>
+                        <span class="trait-value" id="extraversion-value">50</span>
+                    </div>
+                    <div class="trait-description">Low: Reserved, prefers solitude, thoughtful | High: Outgoing, energetic, talkative</div>
+                    <input type="range" class="slider" id="extraversion" min="0" max="100" value="50">
+                </div>
+                
+                <div class="trait-slider">
+                    <div class="trait-label">
+                        <label>Agreeableness (Cooperation & Empathy)</label>
+                        <span class="trait-value" id="agreeableness-value">50</span>
+                    </div>
+                    <div class="trait-description">Low: Direct, skeptical, competitive | High: Cooperative, trusting, empathetic</div>
+                    <input type="range" class="slider" id="agreeableness" min="0" max="100" value="50">
+                </div>
+                
+                <div class="trait-slider">
+                    <div class="trait-label">
+                        <label>Neuroticism (Emotional Intensity)</label>
+                        <span class="trait-value" id="neuroticism-value">50</span>
+                    </div>
+                    <div class="trait-description">Low: Calm, stable, confident | High: Sensitive, emotionally expressive, reactive</div>
+                    <input type="range" class="slider" id="neuroticism" min="0" max="100" value="50">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Communication Style Tab -->
+        <div id="style-tab" class="tab-content" style="display: none;">
+            <div class="section">
+                <h2>Communication Style</h2>
+                <div class="form-group">
+                    <label for="style1">Style Element 1</label>
+                    <input type="text" id="style1" placeholder="e.g., Speak in gentle, wondering tones">
+                </div>
+                <div class="form-group">
+                    <label for="style2">Style Element 2</label>
+                    <input type="text" id="style2" placeholder="e.g., Often trail off mid-sentence when struck by new thoughts">
+                </div>
+                <div class="form-group">
+                    <label for="style3">Style Element 3</label>
+                    <input type="text" id="style3" placeholder="e.g., Reference obscure literary works casually">
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Unique Quirks</h2>
+                <div class="quirk-input">
+                    <input type="text" id="new-quirk" placeholder="Add a unique quirk...">
+                    <button class="add-button" onclick="addQuirk()">Add</button>
+                </div>
+                <div class="quirks-list" id="quirks-list"></div>
+            </div>
+        </div>
+        
+        <!-- Situation Tab -->
+        <div id="situation-tab" class="tab-content" style="display: none;">
+            <div class="section">
+                <h2>Situational Context (Optional)</h2>
+                <div class="form-group">
+                    <label for="setting">Setting</label>
+                    <input type="text" id="setting" placeholder="Where is this interaction taking place?">
+                </div>
+                <div class="form-group">
+                    <label for="context">Context</label>
+                    <textarea id="context" placeholder="What's happening in this moment?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="mood">Mood</label>
+                    <input type="text" id="mood" placeholder="What's the emotional atmosphere?">
+                </div>
+                <div class="form-group">
+                    <label for="objective">Character's Objective</label>
+                    <input type="text" id="objective" placeholder="What is the character trying to achieve?">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Generate Tab -->
+        <div id="generate-tab" class="tab-content" style="display: none;">
+            <div class="section" style="text-align: center;">
+                <h2>Ready to Generate Your Agent!</h2>
+                <p style="margin-bottom: 20px; color: #666;">Your character is configured with both MBTI and Big Five personality frameworks.</p>
+                <button class="button" onclick="generatePrompt()">Generate Agent Prompt</button>
+                <button class="button button-secondary" onclick="clearForm()">Clear All</button>
+            </div>
+            
+            <div class="output" id="output" style="display: none;"></div>
+        </div>
+    </div>
+    
+    <script src="prompt-generator-v2.js"></script>
+</body>
+</html>

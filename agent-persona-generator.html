@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Persona Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .section h2 {
+            color: #34495e;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .trait-slider {
+            margin-bottom: 20px;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .trait-value {
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .trait-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .button {
+            background: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .button:hover {
+            background: #2980b9;
+        }
+        
+        .button-secondary {
+            background: #95a5a6;
+        }
+        
+        .button-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .output {
+            margin-top: 30px;
+            padding: 20px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .preset-button {
+            padding: 8px 16px;
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .preset-button:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .quirk-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .quirk-input input {
+            flex: 1;
+        }
+        
+        .add-button {
+            padding: 8px 16px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .add-button:hover {
+            background: #229954;
+        }
+        
+        .quirks-list {
+            margin-top: 10px;
+        }
+        
+        .quirk-item {
+            background: #ecf0f1;
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .remove-button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .remove-button:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Agent Persona Generator</h1>
+        
+        <div class="preset-buttons">
+            <button class="preset-button" onclick="loadPreset('librarian')">Whimsical Librarian</button>
+            <button class="preset-button" onclick="loadPreset('detective')">Noir Detective</button>
+            <button class="preset-button" onclick="loadPreset('mentor')">Wise Mentor</button>
+            <button class="preset-button" onclick="loadPreset('explorer')">Curious Explorer</button>
+        </div>
+        
+        <div class="section">
+            <h2>Core Identity</h2>
+            <div class="form-group">
+                <label for="name">Character Name</label>
+                <input type="text" id="name" placeholder="e.g., Elara">
+            </div>
+            
+            <div class="form-group">
+                <label for="archetype">Archetype</label>
+                <input type="text" id="archetype" placeholder="e.g., The Whimsical Librarian">
+            </div>
+            
+            <div class="form-group">
+                <label for="backstory">Backstory</label>
+                <textarea id="backstory" placeholder="Brief history that shapes their worldview..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="motivation">Core Motivation</label>
+                <input type="text" id="motivation" placeholder="What drives this character?">
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Personality Traits (Big Five)</h2>
+            
+            <div class="trait-slider">
+                <div class="trait-label">
+                    <label>Openness (Curiosity & Imagination)</label>
+                    <span class="trait-value" id="openness-value">50</span>
+                </div>
+                <input type="range" class="slider" id="openness" min="0" max="100" value="50">
+            </div>
+            
+            <div class="trait-slider">
+                <div class="trait-label">
+                    <label>Conscientiousness (Organization & Discipline)</label>
+                    <span class="trait-value" id="conscientiousness-value">50</span>
+                </div>
+                <input type="range" class="slider" id="conscientiousness" min="0" max="100" value="50">
+            </div>
+            
+            <div class="trait-slider">
+                <div class="trait-label">
+                    <label>Extraversion (Social Energy)</label>
+                    <span class="trait-value" id="extraversion-value">50</span>
+                </div>
+                <input type="range" class="slider" id="extraversion" min="0" max="100" value="50">
+            </div>
+            
+            <div class="trait-slider">
+                <div class="trait-label">
+                    <label>Agreeableness (Cooperation & Empathy)</label>
+                    <span class="trait-value" id="agreeableness-value">50</span>
+                </div>
+                <input type="range" class="slider" id="agreeableness" min="0" max="100" value="50">
+            </div>
+            
+            <div class="trait-slider">
+                <div class="trait-label">
+                    <label>Neuroticism (Emotional Intensity)</label>
+                    <span class="trait-value" id="neuroticism-value">50</span>
+                </div>
+                <input type="range" class="slider" id="neuroticism" min="0" max="100" value="50">
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Communication Style</h2>
+            <div class="form-group">
+                <label for="style1">Style Element 1</label>
+                <input type="text" id="style1" placeholder="e.g., Speak in gentle, wondering tones">
+            </div>
+            <div class="form-group">
+                <label for="style2">Style Element 2</label>
+                <input type="text" id="style2" placeholder="e.g., Often trail off mid-sentence when struck by new thoughts">
+            </div>
+            <div class="form-group">
+                <label for="style3">Style Element 3</label>
+                <input type="text" id="style3" placeholder="e.g., Reference obscure literary works casually">
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Unique Quirks</h2>
+            <div class="quirk-input">
+                <input type="text" id="new-quirk" placeholder="Add a unique quirk...">
+                <button class="add-button" onclick="addQuirk()">Add</button>
+            </div>
+            <div class="quirks-list" id="quirks-list"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Situational Context (Optional)</h2>
+            <div class="form-group">
+                <label for="setting">Setting</label>
+                <input type="text" id="setting" placeholder="Where is this interaction taking place?">
+            </div>
+            <div class="form-group">
+                <label for="context">Context</label>
+                <textarea id="context" placeholder="What's happening in this moment?"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="mood">Mood</label>
+                <input type="text" id="mood" placeholder="What's the emotional atmosphere?">
+            </div>
+            <div class="form-group">
+                <label for="objective">Character's Objective</label>
+                <input type="text" id="objective" placeholder="What is the character trying to achieve?">
+            </div>
+        </div>
+        
+        <button class="button" onclick="generatePrompt()">Generate Agent Prompt</button>
+        <button class="button button-secondary" onclick="clearForm()">Clear Form</button>
+        
+        <div class="output" id="output" style="display: none;"></div>
+    </div>
+    
+    <script src="prompt-generator.js"></script>
+</body>
+</html>

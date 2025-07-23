@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Persona Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6200EA;
+            --primary-dark: #3700B3;
+            --primary-light: #BB86FC;
+            --secondary: #03DAC6;
+            --background: #FAFAFA;
+            --surface: #FFFFFF;
+            --error: #CF6679;
+            --on-primary: #FFFFFF;
+            --on-surface: #1C1B1F;
+            --on-surface-variant: #49454F;
+            --outline: #79747E;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-large: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--on-surface);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            padding: 24px 0;
+            box-shadow: 0 2px 4px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo .material-icons {
+            font-size: 32px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Preset Pills */
+        .preset-section {
+            margin-bottom: 40px;
+        }
+
+        .preset-pills {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .preset-pill {
+            padding: 8px 20px;
+            background: var(--surface);
+            border: 2px solid var(--outline);
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preset-pill:hover {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: var(--on-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(98, 0, 234, 0.2);
+        }
+
+        /* Sections */
+        .section {
+            background: var(--surface);
+            border-radius: var(--radius-large);
+            margin-bottom: 24px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .section.collapsed {
+            box-shadow: 0 1px 2px var(--shadow);
+        }
+
+        .section-header {
+            padding: 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: rgba(98, 0, 234, 0.04);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .section-title h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--on-surface);
+        }
+
+        .section-title .material-icons {
+            color: var(--primary);
+            font-size: 28px;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: var(--on-surface-variant);
+            margin-top: 4px;
+        }
+
+        .expand-icon {
+            color: var(--on-surface-variant);
+            transition: transform 0.3s ease;
+        }
+
+        .section.collapsed .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            padding: 0 24px 24px;
+            max-height: 2000px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .section.collapsed .section-content {
+            max-height: 0;
+            padding: 0 24px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--on-surface);
+            margin-bottom: 8px;
+        }
+
+        .text-input,
+        .textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--outline);
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--background);
+        }
+
+        .text-input:focus,
+        .textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface);
+        }
+
+        .textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* MBTI Compact Design */
+        .mbti-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .mbti-dimension {
+            background: var(--background);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .mbti-dimension.selected {
+            border-color: var(--primary);
+            background: rgba(98, 0, 234, 0.04);
+        }
+
+        .mbti-question {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: var(--on-surface);
+        }
+
+        .mbti-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .mbti-option {
+            padding: 16px;
+            background: var(--surface);
+            border: 2px solid var(--outline);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mbti-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        .mbti-option.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .mbti-letter {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .mbti-label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .mbti-desc {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Sliders */
+        .slider-group {
+            margin-bottom: 24px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .slider-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--on-surface);
+        }
+
+        .slider-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(98, 0, 234, 0.1);
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .slider-hint {
+            font-size: 12px;
+            color: var(--on-surface-variant);
+            margin-bottom: 8px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            background: var(--outline);
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        /* Chips for quirks */
+        .chip-input-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .chip-input {
+            flex: 1;
+        }
+
+        .add-button {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(98, 0, 234, 0.2);
+        }
+
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            padding: 8px 16px;
+            background: rgba(98, 0, 234, 0.1);
+            color: var(--primary);
+            border-radius: 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chip .material-icons {
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .chip .material-icons:hover {
+            color: var(--error);
+        }
+
+        /* Generate Button */
+        .generate-section {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .generate-button {
+            padding: 16px 48px;
+            background: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            border-radius: 28px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(98, 0, 234, 0.3);
+        }
+
+        .generate-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(98, 0, 234, 0.4);
+        }
+
+        .generate-button .material-icons {
+            font-size: 24px;
+        }
+
+        /* Output */
+        .output-section {
+            margin-top: 40px;
+            background: var(--surface);
+            border-radius: var(--radius-large);
+            padding: 32px;
+            box-shadow: 0 2px 8px var(--shadow);
+            display: none;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .output-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--on-surface);
+        }
+
+        .copy-button {
+            padding: 8px 16px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-button:hover {
+            background: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .output-content {
+            background: var(--background);
+            border-radius: var(--radius);
+            padding: 24px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        /* MBTI Result Badge */
+        .mbti-result {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--on-primary);
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(98, 0, 234, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .mbti-result .material-icons {
+            font-size: 24px;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+            
+            .mbti-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .preset-pills {
+                flex-direction: column;
+            }
+            
+            .preset-pill {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="material-icons">psychology</span>
+                AI Persona Studio
+            </div>
+            <button class="copy-button" onclick="clearAll()">
+                <span class="material-icons">refresh</span>
+                Reset All
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Presets -->
+        <div class="preset-section">
+            <h3 style="font-size: 18px; margin-bottom: 8px;">Quick Start Templates</h3>
+            <div class="preset-pills">
+                <button class="preset-pill" onclick="loadPreset('librarian')">
+                    <span class="material-icons">auto_stories</span>
+                    Whimsical Librarian
+                </button>
+                <button class="preset-pill" onclick="loadPreset('detective')">
+                    <span class="material-icons">search</span>
+                    Noir Detective
+                </button>
+                <button class="preset-pill" onclick="loadPreset('mentor')">
+                    <span class="material-icons">school</span>
+                    Wise Mentor
+                </button>
+                <button class="preset-pill" onclick="loadPreset('explorer')">
+                    <span class="material-icons">explore</span>
+                    Curious Explorer
+                </button>
+            </div>
+        </div>
+
+        <!-- Core Identity -->
+        <div class="section" id="identity-section">
+            <div class="section-header" onclick="toggleSection('identity-section')">
+                <div class="section-title">
+                    <span class="material-icons">badge</span>
+                    <div>
+                        <h2>Core Identity</h2>
+                        <div class="section-subtitle">Define your character's essence</div>
+                    </div>
+                </div>
+                <span class="material-icons expand-icon">expand_less</span>
+            </div>
+            <div class="section-content">
+                <div class="form-group">
+                    <label for="name">Character Name</label>
+                    <input type="text" class="text-input" id="name" placeholder="Give your character a memorable name">
+                </div>
+                <div class="form-group">
+                    <label for="archetype">Archetype</label>
+                    <input type="text" class="text-input" id="archetype" placeholder="e.g., The Wise Sage, The Rebel Leader">
+                </div>
+                <div class="form-group">
+                    <label for="backstory">Backstory</label>
+                    <textarea class="textarea" id="backstory" placeholder="What shaped them into who they are today?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="motivation">Core Motivation</label>
+                    <input type="text" class="text-input" id="motivation" placeholder="What drives them forward?">
+                </div>
+            </div>
+        </div>
+
+        <!-- Personality -->
+        <div class="section" id="personality-section">
+            <div class="section-header" onclick="toggleSection('personality-section')">
+                <div class="section-title">
+                    <span class="material-icons">psychology</span>
+                    <div>
+                        <h2>Personality</h2>
+                        <div class="section-subtitle">Shape their psychological profile</div>
+                    </div>
+                </div>
+                <span class="material-icons expand-icon">expand_less</span>
+            </div>
+            <div class="section-content">
+                <!-- MBTI Result -->
+                <div id="mbti-result-badge" style="display: none; margin-bottom: 24px;">
+                    <div class="mbti-result">
+                        <span class="material-icons">star</span>
+                        <span id="mbti-type-text">INFJ - The Advocate</span>
+                    </div>
+                </div>
+
+                <!-- MBTI Selection -->
+                <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--on-surface-variant);">Quick Personality Type</h3>
+                <div class="mbti-grid">
+                    <div class="mbti-dimension" id="energy-dimension">
+                        <div class="mbti-question">Where do they get energy?</div>
+                        <div class="mbti-options">
+                            <div class="mbti-option" onclick="selectMBTI('energy', 'E', this)">
+                                <div class="mbti-letter">E</div>
+                                <div class="mbti-label">Extravert</div>
+                                <div class="mbti-desc">From people & activities</div>
+                            </div>
+                            <div class="mbti-option" onclick="selectMBTI('energy', 'I', this)">
+                                <div class="mbti-letter">I</div>
+                                <div class="mbti-label">Introvert</div>
+                                <div class="mbti-desc">From quiet reflection</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mbti-dimension" id="information-dimension">
+                        <div class="mbti-question">How do they process information?</div>
+                        <div class="mbti-options">
+                            <div class="mbti-option" onclick="selectMBTI('information', 'S', this)">
+                                <div class="mbti-letter">S</div>
+                                <div class="mbti-label">Sensor</div>
+                                <div class="mbti-desc">Facts & details</div>
+                            </div>
+                            <div class="mbti-option" onclick="selectMBTI('information', 'N', this)">
+                                <div class="mbti-letter">N</div>
+                                <div class="mbti-label">Intuitive</div>
+                                <div class="mbti-desc">Patterns & possibilities</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mbti-dimension" id="decisions-dimension">
+                        <div class="mbti-question">How do they make decisions?</div>
+                        <div class="mbti-options">
+                            <div class="mbti-option" onclick="selectMBTI('decisions', 'T', this)">
+                                <div class="mbti-letter">T</div>
+                                <div class="mbti-label">Thinker</div>
+                                <div class="mbti-desc">Logic & analysis</div>
+                            </div>
+                            <div class="mbti-option" onclick="selectMBTI('decisions', 'F', this)">
+                                <div class="mbti-letter">F</div>
+                                <div class="mbti-label">Feeler</div>
+                                <div class="mbti-desc">Values & harmony</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mbti-dimension" id="lifestyle-dimension">
+                        <div class="mbti-question">How do they approach life?</div>
+                        <div class="mbti-options">
+                            <div class="mbti-option" onclick="selectMBTI('lifestyle', 'J', this)">
+                                <div class="mbti-letter">J</div>
+                                <div class="mbti-label">Judger</div>
+                                <div class="mbti-desc">Plans & structure</div>
+                            </div>
+                            <div class="mbti-option" onclick="selectMBTI('lifestyle', 'P', this)">
+                                <div class="mbti-letter">P</div>
+                                <div class="mbti-label">Perceiver</div>
+                                <div class="mbti-desc">Flexibility & openness</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Big Five Sliders -->
+                <h3 style="font-size: 16px; margin: 32px 0 16px; color: var(--on-surface-variant);">Fine-tune Personality Traits</h3>
+                
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Openness</span>
+                        <span class="slider-value" id="openness-value">50</span>
+                    </div>
+                    <div class="slider-hint">Practical ← → Creative</div>
+                    <input type="range" class="slider" id="openness" min="0" max="100" value="50">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Conscientiousness</span>
+                        <span class="slider-value" id="conscientiousness-value">50</span>
+                    </div>
+                    <div class="slider-hint">Spontaneous ← → Organized</div>
+                    <input type="range" class="slider" id="conscientiousness" min="0" max="100" value="50">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Extraversion</span>
+                        <span class="slider-value" id="extraversion-value">50</span>
+                    </div>
+                    <div class="slider-hint">Reserved ← → Outgoing</div>
+                    <input type="range" class="slider" id="extraversion" min="0" max="100" value="50">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Agreeableness</span>
+                        <span class="slider-value" id="agreeableness-value">50</span>
+                    </div>
+                    <div class="slider-hint">Direct ← → Cooperative</div>
+                    <input type="range" class="slider" id="agreeableness" min="0" max="100" value="50">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Neuroticism</span>
+                        <span class="slider-value" id="neuroticism-value">50</span>
+                    </div>
+                    <div class="slider-hint">Calm ← → Emotional</div>
+                    <input type="range" class="slider" id="neuroticism" min="0" max="100" value="50">
+                </div>
+            </div>
+        </div>
+
+        <!-- Communication Style -->
+        <div class="section collapsed" id="style-section">
+            <div class="section-header" onclick="toggleSection('style-section')">
+                <div class="section-title">
+                    <span class="material-icons">chat</span>
+                    <div>
+                        <h2>Communication Style</h2>
+                        <div class="section-subtitle">How they express themselves</div>
+                    </div>
+                </div>
+                <span class="material-icons expand-icon">expand_less</span>
+            </div>
+            <div class="section-content">
+                <div class="form-group">
+                    <label for="style1">Speech Pattern 1</label>
+                    <input type="text" class="text-input" id="style1" placeholder="e.g., Uses metaphors frequently">
+                </div>
+                <div class="form-group">
+                    <label for="style2">Speech Pattern 2</label>
+                    <input type="text" class="text-input" id="style2" placeholder="e.g., Asks rhetorical questions">
+                </div>
+                <div class="form-group">
+                    <label for="style3">Speech Pattern 3</label>
+                    <input type="text" class="text-input" id="style3" placeholder="e.g., Speaks in measured tones">
+                </div>
+
+                <h3 style="font-size: 16px; margin: 24px 0 16px;">Unique Quirks</h3>
+                <div class="chip-input-container">
+                    <input type="text" class="text-input chip-input" id="new-quirk" placeholder="Add a memorable quirk...">
+                    <button class="add-button" onclick="addQuirk()">
+                        <span class="material-icons">add</span>
+                        Add
+                    </button>
+                </div>
+                <div class="chips-container" id="quirks-container"></div>
+            </div>
+        </div>
+
+        <!-- Situation -->
+        <div class="section collapsed" id="situation-section">
+            <div class="section-header" onclick="toggleSection('situation-section')">
+                <div class="section-title">
+                    <span class="material-icons">theater_comedy</span>
+                    <div>
+                        <h2>Situational Context</h2>
+                        <div class="section-subtitle">Set the scene (optional)</div>
+                    </div>
+                </div>
+                <span class="material-icons expand-icon">expand_less</span>
+            </div>
+            <div class="section-content">
+                <div class="form-group">
+                    <label for="setting">Setting</label>
+                    <input type="text" class="text-input" id="setting" placeholder="Where is this taking place?">
+                </div>
+                <div class="form-group">
+                    <label for="context">Context</label>
+                    <textarea class="textarea" id="context" placeholder="What's happening in this moment?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="mood">Mood</label>
+                    <input type="text" class="text-input" id="mood" placeholder="What's the emotional atmosphere?">
+                </div>
+                <div class="form-group">
+                    <label for="objective">Objective</label>
+                    <input type="text" class="text-input" id="objective" placeholder="What is the character trying to achieve?">
+                </div>
+            </div>
+        </div>
+
+        <!-- Generate Button -->
+        <div class="generate-section">
+            <button class="generate-button" onclick="generatePrompt()">
+                <span class="material-icons">auto_awesome</span>
+                Generate AI Persona
+            </button>
+        </div>
+
+        <!-- Output -->
+        <div class="output-section" id="output-section">
+            <div class="output-header">
+                <h3 class="output-title">Your AI Persona Prompt</h3>
+                <button class="copy-button" onclick="copyToClipboard()">
+                    <span class="material-icons">content_copy</span>
+                    Copy
+                </button>
+            </div>
+            <div class="output-content" id="output-content"></div>
+        </div>
+    </div>
+
+    <script src="prompt-generator-v3.js"></script>
+</body>
+</html>
